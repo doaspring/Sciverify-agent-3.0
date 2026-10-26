@@ -1,0 +1,18 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+sample_label,timepoint,enzyme_activity_u_ml
+specimen_01,before,47.93
+specimen_01,after,52.40
+specimen_02,before,42.65
+specimen_02,after,47.40
+specimen_03,before,48.68
+specimen_03,after,52.48
+specimen_04,before,42.24
+specimen_04,after,44.23
+specimen_05,before,45.55
+specimen_05,after,50.84
+specimen_06,before,46.25
+specimen_06,after,50.77
+specimen_07,before,44.13
+specimen_07,after,50.01
+specimen_08,before,46.94
+specimen_08,after,49.40

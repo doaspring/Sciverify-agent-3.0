@@ -1,0 +1,14 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+fermenter_id,group,enzyme_activity_u_ml
+F001,strain_A,53.52
+F002,strain_A,53.32
+F003,strain_A,54.17
+F004,strain_A,54.40
+F005,strain_A,51.64
+F006,strain_A,51.90
+F007,strain_B,55.87
+F008,strain_B,59.53
+F009,strain_B,55.80
+F010,strain_B,61.39
+F011,strain_B,57.57
+F012,strain_B,61.26

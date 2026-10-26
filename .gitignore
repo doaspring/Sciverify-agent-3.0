@@ -1,0 +1,10 @@
+# 密钥与本地文件不入库
+.env
+*.env
+!*.env.example
+logs/
+uploads/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/

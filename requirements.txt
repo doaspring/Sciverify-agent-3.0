@@ -1,0 +1,12 @@
+# 部署用运行时依赖（Streamlit Community Cloud / HF Spaces）
+# 完整锁定版本见 requirements.lock（开发/复现环境用）
+streamlit>=1.40
+pandas>=2.2
+numpy>=2.0
+scipy>=1.14
+matplotlib>=3.9
+pydantic>=2.8
+jinja2>=3.1
+httpx>=0.27
+python-dotenv>=1.0
+openpyxl>=3.1

@@ -1,0 +1,26 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+fermenter_id,group,technical_repeat_id,product_concentration_g_l
+B001,process_A,R1,11.817
+B001,process_A,R2,11.459
+B001,process_A,R3,11.355
+B002,process_A,R1,12.893
+B002,process_A,R2,12.152
+B002,process_A,R3,12.182
+B003,process_A,R1,13.193
+B003,process_A,R2,13.190
+B003,process_A,R3,12.891
+B004,process_A,R1,12.177
+B004,process_A,R2,12.385
+B004,process_A,R3,12.512
+B005,process_B,R1,14.133
+B005,process_B,R2,14.664
+B005,process_B,R3,14.710
+B006,process_B,R1,12.667
+B006,process_B,R2,13.116
+B006,process_B,R3,12.728
+B007,process_B,R1,13.713
+B007,process_B,R2,13.678
+B007,process_B,R3,13.488
+B008,process_B,R1,14.387
+B008,process_B,R2,14.064
+B008,process_B,R3,14.275
