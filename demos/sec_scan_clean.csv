@@ -1,0 +1,18 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+corpus_id,scanner,detection_rate_pct
+corpus_01,scanner_A,76.23
+corpus_02,scanner_A,75.59
+corpus_03,scanner_A,78.82
+corpus_04,scanner_A,80.11
+corpus_05,scanner_A,76.07
+corpus_06,scanner_A,75.19
+corpus_07,scanner_A,78.59
+corpus_08,scanner_A,75.87
+corpus_09,scanner_B,81.12
+corpus_10,scanner_B,79.03
+corpus_11,scanner_B,83.12
+corpus_12,scanner_B,80.34
+corpus_13,scanner_B,79.79
+corpus_14,scanner_B,83.60
+corpus_15,scanner_B,77.67
+corpus_16,scanner_B,80.84

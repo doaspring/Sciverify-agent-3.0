@@ -62,6 +62,8 @@ demo_files = {
     "案例D 演练：两构型各8批次·零阻断全流程": "practice_clean.csv",
     "案例F 大模型评测：两提示策略×8基准（零阻断）": "llm_eval_clean.csv",
     "案例G 大模型陷阱：同任务5次采样≠独立实验（40行）": "llm_sampling_replicates.csv",
+    "案例H 安全评测：两漏洞扫描器×8样本集（零阻断）": "sec_scan_clean.csv",
+    "案例I 安全陷阱：同样本集3次扫描≠3份证据（24行）": "sec_scan_replicates.csv",
     "案例E XLSX：双工作表（含README）": "xlsx_demo.xlsx",
 }
 
