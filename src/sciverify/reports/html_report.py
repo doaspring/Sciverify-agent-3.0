@@ -138,6 +138,13 @@ _TEMPLATE = """<!DOCTYPE html>
    {{ verification.status }}</span>
    —— 第二实现（math-only，含独立不完全 Beta 算法）逐字段复算：
    {{ verification.checks_json }}</p>
+
+{% if interpretation %}
+<h2>7. AI 结果解读（Intern-S2 生成 · 定性描述 · 不含数字）</h2>
+<p>{{ interpretation }}</p>
+<p class="muted">生成约束：解读文字禁止引用任何数值；全部数字以第 4 节工具输出为准。
+{% if interpret_source %}来源：{{ interpret_source }}{% endif %}</p>
+{% endif %}
 {% else %}
 <h2>3. 分析计划与执行</h2>
 <p><span class="badge-block">BLOCKED</span> 本次运行被设计审查阻断，未产生任何统计结果。
@@ -176,6 +183,8 @@ def render_report_html(
     plan_source: str,
     tool_result: dict[str, Any] | None,
     verification: dict[str, Any] | None,
+    interpretation: str = "",
+    interpret_source: str = "",
     boxplot_png_path: str | Path | None = None,
     blocked_reason: str = "",
     result_hash: str = "",
@@ -224,6 +233,8 @@ def render_report_html(
         ci_json=json.dumps(list(tr.get("confidence_interval") or [])),
         lib_versions_json=json.dumps(tr.get("library_versions", {}), ensure_ascii=False),
         boxplot_png_b64=png_b64,
+        interpretation=interpretation,
+        interpret_source=interpret_source,
         verification={**verification,
                      "checks_json": json.dumps(verification.get("checks", {}),
                                                ensure_ascii=False)},
@@ -258,6 +269,8 @@ def build_report_for_state(state, dataset_name: str, dataset_sha256: str,
         plan_source=state.plan_source,
         tool_result=state.tool_result,
         verification=state.verification,
+        interpretation=state.interpretation,
+        interpret_source="intern_s2（LIVE）" if state.interpretation and state.mode == "LIVE" and "模板句" not in state.interpretation else "确定性模板句",
         boxplot_png_path=boxplot_png_path,
         blocked_reason=state.blocked_reason,
         result_hash=sha256_of(state.tool_result) if state.tool_result else "",

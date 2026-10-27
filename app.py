@@ -332,6 +332,10 @@ if design is not None and review_obj is not None and review_obj.overall != Sever
             st.session_state.wf_plan = state.plan
             st.session_state.wf_plan_source = state.plan_source
             st.session_state.wf_verification = state.verification
+            st.session_state.wf_interpretation = state.interpretation
+            st.session_state.wf_interpretation_live = bool(
+                state.interpretation and "模板句" not in state.interpretation
+            )
             if state.tool_result and state.unit_df is not None:
                 import uuid as _u2
 
@@ -438,6 +442,15 @@ if design is not None and review_obj is not None and review_obj.overall != Sever
                 "数值全部来自本地 SciPy/NumPy 确定性计算："
                 f"{tool_result['library_versions']}"
             )
+            interp = st.session_state.get("wf_interpretation", "")
+            if interp:
+                with st.expander("🤖 AI 结果解读（定性描述，不含数字）", expanded=True):
+                    st.markdown(interp)
+                    st.caption(
+                        "由书生 Intern-S2 受约束生成（禁止引用数值；数字以上方工具输出为准）"
+                        if st.session_state.get("wf_interpretation_live")
+                        else "离线确定性模板句（AI 解读不可用时的回退）"
+                    )
         with cB:
             st.image(st.session_state.get("boxplot_path"))
 elif design is not None:
@@ -480,6 +493,12 @@ if design is not None and st.session_state.get("tool_result"):
             plan_source=st.session_state.get("wf_plan_source", "ui_manual"),
             tool_result=tr,
             verification=st.session_state.get("wf_verification") or {"status": "MANUAL", "checks": {}},
+            interpretation=st.session_state.get("wf_interpretation", ""),
+            interpret_source=(
+                "intern_s2（LIVE）"
+                if st.session_state.get("wf_interpretation_live")
+                else "确定性模板句"
+            ),
             boxplot_png_path=st.session_state.get("boxplot_path"),
             result_hash=sha256_of(tr),
         )

@@ -53,6 +53,7 @@ class WorkflowState:
     unit_df: pd.DataFrame | None = None
     tool_result: dict[str, Any] | None = None
     verification: dict[str, Any] | None = None
+    interpretation: str = ""
     status: str = "RUNNING"  # RUNNING | PASS | WARN_PASS | BLOCKED | FAILED
     blocked_reason: str = ""
     tool_call_ids: list[str] = field(default_factory=list)
@@ -326,6 +327,78 @@ def _has_open_warn(state: WorkflowState) -> bool:
     )
 
 
+# ---------------------------------------------------------------- AI 结果解读
+
+
+def contains_forbidden_numbers(text: str) -> list[str]:
+    """检查解读文字中是否出现数字（AI 解读严禁引用数值，防止编造）."""
+    import re
+
+    return re.findall(r"\d+(?:\.\d+)?%?", text)
+
+
+_INTERPRET_SYSTEM = (
+    "你是科研统计结果解读助手。请基于提供的真实统计结论，用不超过 4 句话写一段"
+    "面向研究者的定性解读：说明两组差异的方向与实际意义、提醒样本量/设计方面的"
+    "注意事项。严禁出现任何数字（包括 P 值、百分比、样本量、年份），"
+    "数值一律由报告模板注入，你只负责定性表述。"
+)
+
+_INTERPRET_FALLBACK = (
+    "两组在结局指标上存在方向性差异；由于有效样本量为独立实验单位数，"
+    "解读时应结合置信区间宽度与设计警告综合判断，不建议仅凭显著性下结论。"
+    "（此为离线模板句：AI 解读不可用时的确定性回退）"
+)
+
+
+def node_interpret(state: WorkflowState, client: InternClient | None) -> None:
+    """AI 结果解读（受约束）：LIVE 由 Intern-S2 生成定性解读（禁数字，
+    违规则重试一次再回退模板句）；REPLAY 直接用模板句。"""
+    if state.status not in ("PASS", "WARN_PASS") or not state.tool_result:
+        state.log("Interpret", "SKIPPED")
+        return
+
+    if state.mode != "LIVE":
+        state.interpretation = _INTERPRET_FALLBACK
+        state.log("Interpret", "OK", source="template_fallback")
+        return
+
+    tr = state.tool_result
+    g = sorted(tr["n_by_group"])
+    fact_lines = [
+        f"工具：{tr['tool']}（独立单位样本量 {tr['n_by_group']}）",
+        f"各组均值：{tr['mean_by_group']}",
+        f"均值差方向：{tr['difference_definition']}",
+        f"P 值显著性：{'统计显著' if tr['p_value'] < 0.05 else '未达显著'}（阈值 0.05）",
+        f"置信区间是否含零：{'不含' if (tr['confidence_interval'][0] > 0 or tr['confidence_interval'][1] < 0) else '包含'}",
+    ]
+    messages: list[dict[str, Any]] = [
+        {"role": "system", "content": _INTERPRET_SYSTEM},
+        {"role": "user", "content": "真实统计结论如下：\n" + "\n".join(fact_lines)},
+    ]
+    for attempt in range(2):  # 首次 + 违规重试一次
+        try:
+            resp = client.chat_with_retry(messages)
+        except Exception as exc:  # 网络/预算等一切失败 → 模板回退
+            state.interpretation = _INTERPRET_FALLBACK
+            state.log("Interpret", "FALLBACK", reason=str(exc)[:150])
+            return
+        text = (resp["choices"][0]["message"].get("content") or "").strip()
+        bad = contains_forbidden_numbers(text)
+        if text and not bad:
+            state.interpretation = text
+            state.log("Interpret", "OK", source="intern_s2", attempt=attempt)
+            return
+        state.log("Interpret", "RETRY", reason="含数字" if bad else "空回复", attempt=attempt)
+        messages.append({"role": "assistant", "content": text})
+        messages.append(
+            {"role": "user", "content": "你的上一段解读包含数字或为空。请重写："
+                                        "不超过 4 句话，严禁任何数字，只做定性解读。"}
+        )
+    state.interpretation = _INTERPRET_FALLBACK
+    state.log("Interpret", "FALLBACK", reason="重试后仍违规，使用模板句")
+
+
 # ---------------------------------------------------------------- 状态机入口
 
 
@@ -358,6 +431,7 @@ def run_workflow(
             break
         node_execute(state)
         node_verify(state)
+        node_interpret(state, client)  # AI 结果解读（受约束，禁数字）
         break  # 单轮计划-执行-核验；多轮规划在 M5 报告流程中扩展
 
     if state.status == "RUNNING":
