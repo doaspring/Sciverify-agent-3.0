@@ -327,6 +327,9 @@ if design is not None and review_obj is not None and review_obj.overall != Sever
             st.session_state.wf_state_events = state.events
             st.session_state.wf_status = state.status
             st.session_state.wf_reason = state.blocked_reason
+            st.session_state.wf_plan = state.plan
+            st.session_state.wf_plan_source = state.plan_source
+            st.session_state.wf_verification = state.verification
             if state.tool_result and state.unit_df is not None:
                 import uuid as _u2
 

@@ -92,7 +92,7 @@ _TEMPLATE = """<!DOCTYPE html>
 
 {% if tool_result %}
 <h2>3. 分析计划与执行</h2>
-<p>工具选择：<strong><code>{{ plan.tool_name }}</code></strong>
+<p>工具选择：<strong><code>{{ plan.tool_name | default("（未记录）") }}</code></strong>
    <span class="muted">（规划来源：{{ plan_source }}）</span><br>
    参数：<code>{{ args_json }}</code></p>
 
@@ -186,6 +186,11 @@ def render_report_html(
         autoescape=select_autoescape(["html"]), undefined=StrictUndefined
     )
     tpl = env.from_string(_TEMPLATE)
+
+    # 计划信息缺失（如 UI 手动执行路径）时从 ToolResult 补全工具名，避免模板缺变量
+    plan = plan or {}
+    if not plan.get("tool_name") and tool_result:
+        plan = {**plan, "tool_name": tool_result.get("tool", "（未记录）")}
 
     png_b64 = ""
     if boxplot_png_path and Path(boxplot_png_path).exists():
