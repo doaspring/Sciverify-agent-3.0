@@ -348,7 +348,7 @@ if design is not None and review_obj is not None and review_obj.overall != Sever
         "paired_t_test" if design.design_type == DesignType.PAIRED else "welch_t_test"
     )
     st.markdown(
-        f"审查通过（{review_after.overall.value}）。按设计类型将执行："
+        f"审查通过（{review_obj.overall.value}）。按设计类型将执行："
         f"**`{expected_tool}`**（有效样本量 = 独立实验单位数）。"
     )
     if st.button("执行统计（本地确定性计算）", type="primary"):
