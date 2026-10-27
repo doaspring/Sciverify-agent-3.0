@@ -1,0 +1,18 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+benchmark_id,prompt_strategy,accuracy_pct
+bench_01,zero_shot_cot,70.74
+bench_02,zero_shot_cot,71.49
+bench_03,zero_shot_cot,75.02
+bench_04,zero_shot_cot,68.12
+bench_05,zero_shot_cot,74.64
+bench_06,zero_shot_cot,70.96
+bench_07,zero_shot_cot,72.90
+bench_08,zero_shot_cot,71.41
+bench_09,few_shot,73.26
+bench_10,few_shot,76.85
+bench_11,few_shot,75.30
+bench_12,few_shot,77.13
+bench_13,few_shot,71.10
+bench_14,few_shot,73.55
+bench_15,few_shot,72.45
+bench_16,few_shot,74.94

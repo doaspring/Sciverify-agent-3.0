@@ -60,6 +60,8 @@ demo_files = {
     "案例B 陷阱：4批次×3技术重复（24行）": "technical_replicates.csv",
     "案例C 配对陷阱：前后对比缺pair_id": "paired_missing_ids.csv",
     "案例D 演练：两构型各8批次·零阻断全流程": "practice_clean.csv",
+    "案例F 大模型评测：两提示策略×8基准（零阻断）": "llm_eval_clean.csv",
+    "案例G 大模型陷阱：同任务5次采样≠独立实验（40行）": "llm_sampling_replicates.csv",
     "案例E XLSX：双工作表（含README）": "xlsx_demo.xlsx",
 }
 
@@ -93,7 +95,10 @@ with col1:
         st.session_state.df_sha = file_sha256(path)
         _reset_downstream_state()
 with col2:
-    upload = st.file_uploader("或上传 CSV/XLSX（≤15MB，需授权数据）", type=["csv", "xlsx"])
+    upload = st.file_uploader(
+        "或上传 CSV/TSV/XLSX/JSON（≤15MB，需授权数据）",
+        type=["csv", "tsv", "xlsx", "json"],
+    )
     if upload is not None:
         tmp_dir = DEMOS_DIR.parent / "uploads"
         tmp_dir.mkdir(exist_ok=True)

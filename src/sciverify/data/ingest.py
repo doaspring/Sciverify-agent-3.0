@@ -12,7 +12,7 @@ import pandas as pd
 
 from sciverify.config import MAX_FILE_MB
 
-ALLOWED_SUFFIXES = {".csv", ".xlsx"}
+ALLOWED_SUFFIXES = {".csv", ".tsv", ".xlsx", ".json"}
 
 
 class DataIngestError(Exception):
@@ -41,15 +41,16 @@ def file_sha256(path: str | Path) -> str:
 
 
 def list_sheets(path: str | Path) -> list[str]:
-    """枚举 XLSX 工作表名（CSV 返回 ["<csv>"]，方便 UI 统一处理）。"""
+    """枚举 XLSX 工作表名（其他格式返回占位符，方便 UI 统一处理）。"""
     p = Path(path)
     if p.suffix.lower() not in ALLOWED_SUFFIXES:
         raise UnsupportedFormatError(
             f"不支持的文件格式 {p.suffix!r}；仅接受 {sorted(ALLOWED_SUFFIXES)}。"
         )
-    if p.suffix.lower() == ".csv":
-        return ["<csv>"]
-    return list(pd.ExcelFile(p).sheet_names)
+    if p.suffix.lower() == ".xlsx":
+        return list(pd.ExcelFile(p).sheet_names)
+    suffix = p.suffix.lower().lstrip(".")
+    return [f"<{suffix}>"]
 
 
 def load_table(
@@ -77,9 +78,13 @@ def load_table(
             f"文件 {size_mb:.2f} MB 超过限制 {limit_mb} MB。"
         )
 
-    if p.suffix.lower() == ".csv":
+    if p.suffix.lower() in {".csv", ".tsv"}:
         # '#' 开头的行是元数据注释（含 SYNTHETIC 标注），不是数据
-        df = pd.read_csv(p, comment="#")
+        sep = "\t" if p.suffix.lower() == ".tsv" else ","
+        df = pd.read_csv(p, sep=sep, comment="#")
+    elif p.suffix.lower() == ".json":
+        # JSON 数组记录（[{"col": val, ...}, ...]），无注释行概念
+        df = pd.read_json(p, orient="records")
     else:
         df = pd.read_excel(p, sheet_name=sheet_name)
 
