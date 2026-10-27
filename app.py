@@ -67,6 +67,16 @@ if "df" not in st.session_state:
     st.session_state.df_name = None
     st.session_state.df_sha = None
 
+
+def _reset_downstream_state() -> None:
+    """数据更换时使下游全部失效：旧设计/审查/结果绝不能用于新数据."""
+    for key in (
+        "design", "review", "tool_result", "boxplot_path",
+        "wf_state_events", "wf_status", "wf_reason",
+        "report_path", "zip_path",
+    ):
+        st.session_state.pop(key, None)
+
 col1, col2 = st.columns([3, 2])
 with col1:
     choice = st.selectbox("一键载入合成演示数据", list(demo_files))
@@ -80,6 +90,7 @@ with col1:
         st.session_state.df = load_table(path, sheet_name=sheet)
         st.session_state.df_name = path.name
         st.session_state.df_sha = file_sha256(path)
+        _reset_downstream_state()
 with col2:
     upload = st.file_uploader("或上传 CSV/XLSX（≤15MB，需授权数据）", type=["csv", "xlsx"])
     if upload is not None:
@@ -99,6 +110,7 @@ with col2:
             st.session_state.df = load_table(tmp, sheet_name=sheet)
             st.session_state.df_name = upload.name
             st.session_state.df_sha = file_sha256(tmp)
+            _reset_downstream_state()
         except Exception as exc:
             st.error(f"加载失败：{exc}")
 
