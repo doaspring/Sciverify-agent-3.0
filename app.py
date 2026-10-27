@@ -59,7 +59,8 @@ demo_files = {
     "案例A 正常：两独立组各6批次（12行）": "valid_independent.csv",
     "案例B 陷阱：4批次×3技术重复（24行）": "technical_replicates.csv",
     "案例C 配对陷阱：前后对比缺pair_id": "paired_missing_ids.csv",
-    "案例D XLSX：双工作表（含README）": "xlsx_demo.xlsx",
+    "案例D 演练：两构型各8批次·零阻断全流程": "practice_clean.csv",
+    "案例E XLSX：双工作表（含README）": "xlsx_demo.xlsx",
 }
 
 if "df" not in st.session_state:

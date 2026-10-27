@@ -1,0 +1,18 @@
+# SYNTHETIC DATA - 由 scripts/make_demo_data.py 以固定种子 20261026 生成的合成演示数据，仅用于 SciVerify Agent 演示，不代表任何真实实验。
+fermenter_id,reactor_type,enzyme_output_g_l
+T001,stirred_tank,44.51
+T002,stirred_tank,46.08
+T003,stirred_tank,37.33
+T004,stirred_tank,39.97
+T005,stirred_tank,44.11
+T006,stirred_tank,49.02
+T007,stirred_tank,44.58
+T008,stirred_tank,44.38
+T009,airlift,48.92
+T010,airlift,48.77
+T011,airlift,47.59
+T012,airlift,48.43
+T013,airlift,48.05
+T014,airlift,53.73
+T015,airlift,49.17
+T016,airlift,48.06
